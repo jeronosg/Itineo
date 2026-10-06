@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itineo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; }
+    .ocean-gradient { background: linear-gradient(135deg, #0c4a6e 0%, #075985 40%, #0284c7 100%); }
+    .hero-pattern { background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E"); }
+    .card-lift { transition: transform .2s ease, box-shadow .2s ease; }
+    .card-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+    .timeline-item:not(:last-child) { border-left: 2px solid #e2e8f0; margin-left: 19px; padding-left: 24px; padding-bottom: 20px; }
+    .timeline-item:last-child { margin-left: 19px; padding-left: 24px; }
+    .timeline-dot { margin-left: -33px; }
+    .fade-in { animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; display:flex; align-items:center; justify-content:center; padding:1rem; overflow-y:auto; }
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:#f1f5f9; }
+    ::-webkit-scrollbar-thumb { background:#94a3b8; border-radius:3px; }
+
+    /* ── DARK MODE ───────────────────────────────────────────── */
+    html.dark { color-scheme: dark; }
+    html.dark body                { background-color: #0f172a !important; }
+    html.dark .bg-slate-50        { background-color: #0f172a !important; }
+    html.dark .bg-white           { background-color: #1e293b !important; }
+    html.dark .bg-slate-100       { background-color: #1e293b !important; }
+    html.dark .bg-slate-200       { background-color: #334155 !important; }
+    html.dark .text-slate-800     { color: #f1f5f9 !important; }
+    html.dark .text-slate-700     { color: #e2e8f0 !important; }
+    html.dark .text-slate-600     { color: #cbd5e1 !important; }
+    html.dark .text-slate-500     { color: #94a3b8 !important; }
+    html.dark .text-slate-400     { color: #64748b !important; }
+    html.dark .text-slate-300     { color: #475569 !important; }
+    html.dark .border-slate-100   { border-color: #334155 !important; }
+    html.dark .border-slate-200   { border-color: #475569 !important; }
+    html.dark .border-slate-300   { border-color: #475569 !important; }
+    html.dark .border-dashed      { border-color: #334155 !important; }
+    html.dark .divide-slate-100>*+* { border-color: #334155 !important; }
+    html.dark input, html.dark select, html.dark textarea {
+      background-color: #1e293b !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
+    html.dark .bg-amber-50        { background-color: #1c0f03 !important; }
+    html.dark .bg-green-50        { background-color: #052e16 !important; }
+    html.dark .bg-red-50          { background-color: #2d0a0a !important; }
+    html.dark .bg-blue-50         { background-color: #0c1a33 !important; }
+    html.dark .timeline-item:not(:last-child) { border-left-color: #334155; }
+    html.dark .hover\:bg-slate-100:hover { background-color: #334155 !important; }
+    html.dark .hover\:bg-slate-50:hover  { background-color: #1e293b !important; }
+    html.dark .hover\:bg-slate-200:hover { background-color: #475569 !important; }
+    html.dark .text-black                { color: #ffffff !important; }
+    html.dark .fab-btn { background-color: #1e293b !important; border-color: #334155 !important; color: #cbd5e1 !important; }
+
+    /* ── PRINT ──────────────────────────────────────────────── */
+    @media print {
+      header nav, .no-print, .modal-overlay, #_toast { display: none !important; }
+      button { display: none !important; }
+      body, html.dark body { background: white !important; }
+      html.dark .bg-white, html.dark .bg-slate-50 { background: white !important; }
+      html.dark .text-slate-800, html.dark .text-slate-700 { color: #1e293b !important; }
+      html.dark .text-slate-500, html.dark .text-slate-400 { color: #64748b !important; }
+      html.dark .border-slate-100 { border-color: #e2e8f0 !important; }
+      html.dark input, html.dark select, html.dark textarea { background: white !important; color: #1e293b !important; }
+      .ocean-gradient { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .card-lift { transform: none !important; box-shadow: 0 1px 3px rgba(0,0,0,.1) !important; }
+      section { break-inside: avoid; }
+      .max-w-6xl { max-width: 100% !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+<div id="app"></div>
+
+<script>
+// ── CONSTANTS ────────────────────────────────────────────────
+const STORE = 'itineo_v1';
+const STORE_LEGACY = 'cruisePlanner_v1';
+
+// ── DEFAULT DATA ─────────────────────────────────────────────
+const DEFAULTS = {
+  cruise: {
+    name:'', cruiseLine:'', ship:'', bookingNumber:'',
+    departureDate:'', returnDate:'', departurePort:'', returnPort:'',
+    roomNumber:'', roomType:'', deckNumber:'', passengers:'',
+    package:'', totalPrice:'', pricePerPerson:'', notes:''
+  },
+  flights: [],
+  stops: [],
+  packing: [],
+  activities: [],
+  budget: { target: '' }
+};
+
+// ── STATE ────────────────────────────────────────────────────
+let S = { view:'home', tab:'cruise', modal:null, homeView:'overview' };
+let D = null;   // active trip data
+let T = null;   // all trips store: { activeId, trips:[{id,...tripData}] }
+
+// ── DATA ─────────────────────────────────────────────────────
+function load() {
+  try {
+    let raw = JSON.parse(localStorage.getItem(STORE));
+    if (!raw) {
+      const legacy = localStorage.getItem(STORE_LEGACY);
+      if (legacy) {
+        raw = JSON.parse(legacy);
+        localStorage.setItem(STORE, legacy);
+        localStorage.removeItem(STORE_LEGACY);
+      }
+    }
+    if (!raw) throw new Error();
+    if (raw.trips) {
+      T = raw; // already multi-trip format
+    } else {
+      // migrate old single-trip format
+      T = { activeId: 1, trips: [{ id: 1, ...raw }] };
+    }
+  } catch {
+    T = { activeId: 1, trips: [{ id: 1, ...clone(DEFAULTS) }] };
+  }
+  D = T.trips.find(t => t.id === T.activeId) || T.trips[0];
+  T.activeId = D.id;
+  if (!D.budget) D.budget = { target: '' };
+  if (localStorage.getItem('darkMode') === '1') document.documentElement.classList.add('dark');
+}
+function save() {
+  const idx = T.trips.findIndex(t => t.id === T.activeId);
+  if (idx >= 0) T.trips[idx] = D;
+  localStorage.setItem(STORE, JSON.stringify(T));
+}
+function toggleDark() {
+  const on = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('darkMode', on ? '1' : '0');
+  softGo();
+}
+function printTrip() {
+  if (S.view !== 'home') { S.view = 'home'; go(0); setTimeout(() => window.print(), 250); }
+  else window.print();
+}
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function uid(arr) { return arr.length ? Math.max(...arr.map(x=>x.id||0))+1 : 1; }
+
+
+// ── UTILS ────────────────────────────────────────────────────
+function esc(s) {
+  if (s==null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function val(id) { const el=document.getElementById(id); return el?el.value.trim():''; }
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,dy]=d.split('-').map(Number);
+  return new Date(y,m-1,dy).toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+function fmtShort(d) {
+  if (!d) return '—';
+  const [y,m,dy]=d.split('-').map(Number);
+  return new Date(y,m-1,dy).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+}
+function fmtTime(t) {
+  if (!t) return '—';
+  const [h,m]=t.split(':').map(Number);
+  return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;
+}
+function daysUntil(d) {
+  if (!d) return null;
+  const [y,m,dy]=d.split('-').map(Number);
+  const today=new Date(); today.setHours(0,0,0,0);
+  return Math.ceil((new Date(y,m-1,dy)-today)/(864e5));
+}
+function nights() {
+  if (!D.cruise.departureDate||!D.cruise.returnDate) return null;
+  const [y1,m1,d1]=D.cruise.departureDate.split('-').map(Number);
+  const [y2,m2,d2]=D.cruise.returnDate.split('-').map(Number);
+  return Math.ceil((new Date(y2,m2-1,d2)-new Date(y1,m1-1,d1))/(864e5));
+}
+function progress() {
+  const t=D.packing.length, p=D.packing.filter(i=>i.packed).length;
+  return { t, p, pct: t?Math.round(p/t*100):0 };
+}
+function groupBy(arr,key) {
+  return arr.reduce((g,x)=>{ const k=x[key]||'Other'; (g[k]=g[k]||[]).push(x); return g; },{});
+}
+function stopStyle(type) {
+  return {
+    embarkation:  {bg:'bg-emerald-100',  tx:'text-emerald-700',  icon:'fa-ship',         label:'Embarkation'},
+    disembarkation:{bg:'bg-rose-100',    tx:'text-rose-700',     icon:'fa-anchor',        label:'Disembarkation'},
+    port:          {bg:'bg-blue-100',    tx:'text-blue-700',     icon:'fa-location-dot',  label:'Port Day'},
+    sea:           {bg:'bg-cyan-100',    tx:'text-cyan-700',     icon:'fa-water',         label:'Sea Day'},
+  }[type]||{bg:'bg-blue-100',tx:'text-blue-700',icon:'fa-location-dot',label:'Port Day'};
+}
+
+// ── RENDER ENGINE ────────────────────────────────────────────
+function go(scrollTop) {
+  const app = document.getElementById('app');
+  app.innerHTML = shell();
+  bind();
+  if (scrollTop != null) window.scrollTo(0, scrollTop);
+}
+function softGo() { // preserve scroll
+  const y = window.scrollY;
+  go(y);
+}
+
+
+// ────────────────────────────────────────────────────────────
+// SHELL
+// ────────────────────────────────────────────────────────────
+function shell() {
+  return `
+  <div class="min-h-screen">
+    <header class="ocean-gradient text-white shadow-lg">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🧳</span>
+          <div>
+            <div class="font-bold text-lg leading-tight">${esc(D.cruise.name)||'Itineo'}</div>
+            ${D.cruise.ship?`<div class="text-blue-200 text-sm">${esc(D.cruise.ship)}</div>`:''}
+          </div>
+        </div>
+        <nav class="flex items-center gap-1">
+          <button onclick="nav('home')" class="px-3 py-2 rounded-lg font-medium text-sm transition-colors ${S.view==='home'?'bg-white/20':'hover:bg-white/10'}">
+            <i class="fa fa-home mr-1"></i><span class="hidden sm:inline">Home</span>
+          </button>
+          <button onclick="nav('admin')" class="px-3 py-2 rounded-lg font-medium text-sm transition-colors ${S.view==='admin'?'bg-white/20':'hover:bg-white/10'}">
+            <i class="fa fa-pen-to-square mr-1"></i><span class="hidden sm:inline">Admin</span>
+          </button>
+          <button onclick="openModal('trips',null)" title="Manage trips" class="relative px-3 py-2 rounded-lg font-medium text-sm transition-colors ${S.modal?.type==='trips'?'bg-white/20':'hover:bg-white/10'}">
+            <i class="fa fa-layer-group mr-1"></i><span class="hidden sm:inline">Trips</span>
+            ${T.trips.length > 1 ? `<span class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-amber-400 text-slate-900 text-[10px] font-bold rounded-full flex items-center justify-center">${T.trips.length}</span>` : ''}
+          </button>
+        </nav>
+      </div>
+    </header>
+    <main class="pb-16">${S.view==='home'?homePage():adminPage()}</main>
+  </div>
+  <!-- Floating action buttons -->
+  <div class="fixed bottom-6 right-6 flex flex-col gap-2 no-print z-40">
+    <button onclick="printTrip()" title="Print trip summary"
+      class="fab-btn w-11 h-11 rounded-full shadow-lg flex items-center justify-center transition-all bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 hover:scale-105">
+      <i class="fa fa-print text-sm"></i>
+    </button>
+    <button onclick="toggleDark()" title="Toggle dark mode"
+      class="fab-btn w-11 h-11 rounded-full shadow-lg flex items-center justify-center transition-all bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 hover:scale-105">
+      <i class="fa ${document.documentElement.classList.contains('dark') ? 'fa-sun' : 'fa-moon'} text-sm"></i>
+    </button>
+  </div>
+  ${S.modal?modalHtml():''}`;
+}
+
+// ────────────────────────────────────────────────────────────
+// TIMELINE VIEW
+// ────────────────────────────────────────────────────────────
+function buildTimeline() {
+  const events = [];
+  const push = (date, time, type, data) => { if (date) events.push({ date, time:time||'', type, data }); };
+
+  // Pre/post activities
+  (D.activities||[]).forEach(a => push(a.date, a.time, 'activity', a));
+  // Outbound flights
+  D.flights.filter(f=>f.dir==='out').forEach(f => push(f.depDate, f.depTime, 'flight-out', f));
+  // Cruise stops (embarkation, port days, sea days, disembarkation)
+  D.stops.forEach(s => push(s.date, s.arrivalTime, 'stop', s));
+  // Cruise start/end if no matching stop already covers it
+  if (D.cruise.departureDate && !D.stops.some(s=>s.type==='embarkation'))
+    push(D.cruise.departureDate, '', 'cruise-start', D.cruise);
+  if (D.cruise.returnDate && !D.stops.some(s=>s.type==='disembarkation'))
+    push(D.cruise.returnDate, '', 'cruise-end', D.cruise);
+  // Return flights
+  D.flights.filter(f=>f.dir==='ret').forEach(f => push(f.depDate, f.depTime, 'flight-ret', f));
+
+  return events.sort((a,b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+}
+
+function timelineView() {
+  const events = buildTimeline();
+  if (!events.length) return `
+    <div class="text-center py-20 text-slate-400">
+      <i class="fa fa-timeline text-4xl mb-4 block text-slate-300"></i>
+      <p class="font-medium text-slate-500">No dates to show yet</p>
+      <p class="text-sm mt-1">Add dates to your trip details, flights, stops, and activities to see the full timeline.</p>
+    </div>`;
+
+  // Group by date
+  const byDate = {};
+  events.forEach(ev => { (byDate[ev.date] = byDate[ev.date]||[]).push(ev); });
+
+  const tlConfig = {
+    'flight-out':   { icon:'fa-plane-departure', bg:'bg-blue-100',    tx:'text-blue-700',    label: f=>`${f.airline||'Flight'} ${f.flightNum||''} · ${f.origCode||f.orig||'?'} → ${f.destCode||f.dest||'?'}`, sub: f=>f.depTime?`Departs ${fmtTime(f.depTime)}${f.arrTime?' · Arrives '+fmtTime(f.arrTime):''}`:'' },
+    'flight-ret':   { icon:'fa-plane-arrival',   bg:'bg-indigo-100',  tx:'text-indigo-700',  label: f=>`${f.airline||'Flight'} ${f.flightNum||''} · ${f.origCode||f.orig||'?'} → ${f.destCode||f.dest||'?'}`, sub: f=>f.depTime?`Departs ${fmtTime(f.depTime)}${f.arrTime?' · Arrives '+fmtTime(f.arrTime):''}`:'' },
+    'stop':         { icon: s=>stopStyle(s.type).icon, bg: s=>'bg-'+stopStyle(s.type).bg.replace('bg-',''), tx: s=>stopStyle(s.type).tx, label: s=>s.location||stopStyle(s.type).label, sub: s=>[s.excursion, s.arrivalTime?'Arrives '+fmtTime(s.arrivalTime):'', s.departureTime?'Departs '+fmtTime(s.departureTime):''].filter(Boolean).join(' · ') },
+    'activity':     { icon: a=>ACT_TYPES[a.type]?.icon||'fa-star', bg: a=>'bg-'+{'hotel':'purple','transport':'orange','activity':'green','restaurant':'red','other':'slate'}[a.type]+'-100', tx: a=>'text-'+{'hotel':'purple','transport':'orange','activity':'green','restaurant':'red','other':'slate'}[a.type]+'-700', label: a=>a.title||(ACT_TYPES[a.type]?.label)||'Activity', sub: a=>[a.time?fmtTime(a.time):'', a.location||''].filter(Boolean).join(' · ') },
+    'cruise-start': { icon:'fa-ship', bg:'bg-emerald-100', tx:'text-emerald-700', label:_=>`Embarkation · ${D.cruise.departurePort||'Departure'}`, sub:_=>D.cruise.ship?`Boarding ${D.cruise.ship}`:'' },
+    'cruise-end':   { icon:'fa-anchor', bg:'bg-rose-100', tx:'text-rose-700', label:_=>`Disembarkation · ${D.cruise.returnPort||D.cruise.departurePort||'Return Port'}`, sub:_=>'' },
+  };
+
+  return `<div class="space-y-6 pt-4">
+    ${Object.entries(byDate).map(([date, evs]) => `
+    <div>
+      <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 ml-1">${fmtDate(date)}</div>
+      <div class="space-y-2">
+        ${evs.map(ev => {
+          const cfg = tlConfig[ev.type];
+          if (!cfg) return '';
+          const icon  = typeof cfg.icon  === 'function' ? cfg.icon(ev.data)  : cfg.icon;
+          const bg    = typeof cfg.bg    === 'function' ? cfg.bg(ev.data)    : cfg.bg;
+          const tx    = typeof cfg.tx    === 'function' ? cfg.tx(ev.data)    : cfg.tx;
+          const label = cfg.label(ev.data);
+          const sub   = cfg.sub(ev.data);
+          return `
+          <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-4 flex gap-3 items-start">
+            <div class="w-9 h-9 rounded-lg ${bg} ${tx} flex items-center justify-center flex-shrink-0 mt-0.5">
+              <i class="fa ${icon} text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-800 text-sm">${esc(label)}</div>
+              ${sub?`<div class="text-slate-400 text-xs mt-0.5">${esc(sub)}</div>`:''}
+              ${ev.type==='activity'&&ev.data.notes?`<div class="text-slate-400 text-xs mt-1 italic">${esc(ev.data.notes)}</div>`:''}
+              ${(ev.type==='stop')&&ev.data.notes?`<div class="text-slate-400 text-xs mt-1 italic">${esc(ev.data.notes)}</div>`:''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ────────────────────────────────────────────────────────────
+// HOME PAGE
+// ────────────────────────────────────────────────────────────
+function homePage() {
+  const c = D.cruise;
+  const days = daysUntil(c.departureDate);
+  const n = nights();
+  const prog = progress();
+  const outbound = D.flights.filter(f=>f.dir==='out');
+  const ret = D.flights.filter(f=>f.dir==='ret');
+  const sortedStops = [...D.stops].sort((a,b)=>(a.day||0)-(b.day||0));
+  const grouped = groupBy(D.packing,'category');
+  const cats = Object.keys(grouped).sort();
+  const acts = [...(D.activities||[])].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  const hasAnything = c.ship||c.cruiseLine||c.departureDate||D.flights.length||D.stops.length||D.packing.length||acts.length;
+
+  return `
+  <div class="fade-in">
+    <!-- HERO -->
+    <div class="ocean-gradient hero-pattern text-white">
+      <div class="max-w-6xl mx-auto px-4 py-14 text-center">
+        ${days!==null?`
+          <div class="inline-block bg-white/20 border border-white/30 rounded-2xl px-6 py-3 mb-6">
+            ${days>0?`<span class="text-4xl font-bold text-black">${days}</span><span class="text-black text-xl font-medium"> days to go!</span>`:
+              days===0?`<span class="text-2xl font-bold text-black">🎉 Today's the day!</span>`:
+              `<span class="text-xl text-black font-medium">Trip was ${Math.abs(days)} day${Math.abs(days)!==1?'s':''} ago</span>`}
+          </div>
+        `:''}
+        <h2 class="text-4xl md:text-5xl font-bold text-black mb-3">${esc(c.name)||'Your Trip'}</h2>
+        ${c.cruiseLine||c.ship?`<p class="text-black text-xl mb-3 font-medium">${esc(c.cruiseLine)}${c.cruiseLine&&c.ship?' · ':''}${esc(c.ship)}</p>`:''}
+        ${c.departureDate&&c.returnDate?`
+          <p class="text-black text-lg font-medium">
+            <i class="fa fa-calendar-days mr-2"></i>${fmtShort(c.departureDate)} — ${fmtShort(c.returnDate)}
+            ${n?` · <strong>${n}</strong> night${n!==1?'s':''}`:''}
+          </p>`:''}
+        ${c.departurePort?`<p class="text-black mt-2 text-sm font-medium"><i class="fa fa-anchor mr-1"></i>Departing from ${esc(c.departurePort)}</p>`:''}
+        ${D.flights.length||D.stops.length||D.packing.length?`
+          <div class="flex flex-wrap justify-center gap-3 mt-8">
+            ${D.flights.length?`<div class="bg-white/15 border border-white/20 rounded-xl px-4 py-3"><div class="text-2xl font-bold text-black">${D.flights.length}</div><div class="text-black text-xs font-semibold">Flight${D.flights.length!==1?'s':''}</div></div>`:''}
+            ${D.stops.filter(s=>s.type==='port').length?`<div class="bg-white/15 border border-white/20 rounded-xl px-4 py-3"><div class="text-2xl font-bold text-black">${D.stops.filter(s=>s.type==='port').length}</div><div class="text-black text-xs font-semibold">Ports</div></div>`:''}
+            ${n?`<div class="bg-white/15 border border-white/20 rounded-xl px-4 py-3"><div class="text-2xl font-bold text-black">${n}</div><div class="text-black text-xs font-semibold">Nights</div></div>`:''}
+            ${D.packing.length?`<div class="bg-white/15 border border-white/20 rounded-xl px-4 py-3"><div class="text-2xl font-bold text-black">${prog.pct}%</div><div class="text-black text-xs font-semibold">Packed</div></div>`:''}
+            ${acts.length?`<div class="bg-white/15 border border-white/20 rounded-xl px-4 py-3"><div class="text-2xl font-bold text-black">${acts.length}</div><div class="text-black text-xs font-semibold">Extra${acts.length!==1?'s':''}</div></div>`:''}
+          </div>`:''}
+      </div>
+    </div>
+
+    <!-- VIEW TOGGLE -->
+    <div class="max-w-6xl mx-auto px-4 pt-6 pb-2 flex items-center gap-2 no-print">
+      <button onclick="S.homeView='overview';softGo()" class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${S.homeView==='overview'?'bg-blue-600 text-white shadow-sm':'bg-white text-slate-600 border border-slate-200'}">
+        <i class="fa fa-grid-2"></i><span>Overview</span>
+      </button>
+      <button onclick="S.homeView='timeline';softGo()" class="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${S.homeView==='timeline'?'bg-blue-600 text-white shadow-sm':'bg-white text-slate-600 border border-slate-200'}">
+        <i class="fa fa-timeline"></i><span>Timeline</span>
+      </button>
+    </div>
+
+    ${S.homeView==='timeline'?`<div class="max-w-6xl mx-auto px-4 pb-10">${timelineView()}</div>`:`
+    <div class="max-w-6xl mx-auto px-4 space-y-10 mt-4">
+      ${!hasAnything?`
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">🗺️</div>
+          <h3 class="text-2xl font-bold text-slate-700 mb-2">Nothing here yet</h3>
+          <p class="text-slate-500 mb-6">Go to Admin to add your trip details, flights, itinerary, and packing list.</p>
+          <button onclick="nav('admin')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors">
+            <i class="fa fa-pen-to-square mr-2"></i>Open Admin
+          </button>
+        </div>`:''}
+
+      <!-- FLIGHTS -->
+      ${D.flights.length?`
+        <section>
+          <h2 class="text-2xl font-bold text-slate-800 mb-5 flex items-center gap-2">
+            <i class="fa fa-plane text-blue-600"></i> Flights
+          </h2>
+          ${outbound.length?`
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3"><i class="fa fa-plane-departure mr-1"></i>Outbound</p>
+            <div class="grid gap-4 ${outbound.length>1?'md:grid-cols-2':''} mb-6">${outbound.map(flightCard).join('')}</div>`:''}
+          ${ret.length?`
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3"><i class="fa fa-plane-arrival mr-1"></i>Return</p>
+            <div class="grid gap-4 ${ret.length>1?'md:grid-cols-2':''}">${ret.map(flightCard).join('')}</div>`:''}
+        </section>`:''}
+
+      <!-- CRUISE DETAILS -->
+      ${cruiseDetailsSection()}
+
+      <!-- ITINERARY -->
+      ${sortedStops.length?`
+        <section>
+          <h2 class="text-2xl font-bold text-slate-800 mb-5 flex items-center gap-2">
+            <i class="fa fa-map-location-dot text-blue-600"></i> Itinerary
+          </h2>
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <div>
+              ${sortedStops.map((stop,i)=>{
+                const st=stopStyle(stop.type);
+                return `
+                <div class="timeline-item flex gap-0">
+                  <div class="flex flex-col items-center mr-4">
+                    <div class="timeline-dot w-10 h-10 rounded-full ${st.bg} flex items-center justify-center flex-shrink-0 z-10">
+                      <i class="fa ${st.icon} ${st.tx} text-sm"></i>
+                    </div>
+                  </div>
+                  <div class="flex-1 pb-2">
+                    <div class="flex flex-wrap items-start justify-between gap-2 pt-1">
+                      <div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm">
+                          <span class="text-slate-400 font-medium">Day ${stop.day||i+1}</span>
+                          ${stop.date?`<span class="text-slate-400">· ${fmtShort(stop.date)}</span>`:''}
+                          <span class="text-xs px-2 py-0.5 rounded-full ${st.bg} ${st.tx} font-medium">${st.label}</span>
+                        </div>
+                        <div class="text-slate-800 font-bold text-lg mt-0.5">${esc(stop.location)||'Unknown'}</div>
+                      </div>
+                      ${stop.arrivalTime||stop.departureTime?`
+                        <div class="text-sm text-right">
+                          ${stop.arrivalTime?`<div class="text-slate-500">Arr: <span class="font-semibold text-slate-700">${fmtTime(stop.arrivalTime)}</span></div>`:''}
+                          ${stop.departureTime?`<div class="text-slate-500">Dep: <span class="font-semibold text-slate-700">${fmtTime(stop.departureTime)}</span></div>`:''}
+                        </div>`:''}
+                    </div>
+                    ${stop.excursion?`<div class="mt-2 inline-flex items-center gap-2 text-sm bg-blue-50 text-blue-700 rounded-lg px-3 py-1.5"><i class="fa fa-binoculars text-blue-400"></i>${esc(stop.excursion)}</div>`:''}
+                    ${stop.notes?`<p class="text-slate-500 text-sm mt-1">${esc(stop.notes)}</p>`:''}
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </section>`:''}
+
+      <!-- BUDGET SUMMARY -->
+      ${(()=>{ const items=budgetItems(); const total=items.reduce((s,i)=>s+i.cost,0); const target=parseCost(D.budget?.target); if(!total && !target) return ''; const pct=target?Math.min(Math.round(total/target*100),100):0; const remaining=target?target-total:null; const fmt=n=>'$'+n.toLocaleString(undefined,{maximumFractionDigits:0}); return `
+      <section>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-wrap items-center gap-4 cursor-pointer hover:border-blue-200 transition-colors" onclick="nav('admin');setTab('budget')">
+          <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+            <i class="fa fa-dollar-sign text-green-600"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-baseline gap-2 flex-wrap">
+              <span class="text-xl font-bold text-slate-800">${fmt(total)}</span>
+              ${target?`<span class="text-slate-400 text-sm">of ${fmt(target)}</span>`:''}
+              ${remaining!==null?`<span class="text-sm font-semibold ${remaining>=0?'text-green-600':'text-red-500'}">${remaining>=0?fmt(remaining)+' left':fmt(Math.abs(remaining))+' over'}</span>`:''}
+            </div>
+            ${target?`<div class="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full rounded-full ${pct>=100?'bg-red-500':pct>=80?'bg-amber-500':'bg-green-500'}" style="width:${pct}%"></div></div>`:''}
+          </div>
+          <div class="text-slate-300 text-sm"><i class="fa fa-chevron-right"></i></div>
+        </div>
+      </section>`; })()}
+
+      <!-- EXTRAS & ACTIVITIES -->
+      ${acts.length?`
+        <section>
+          <h2 class="text-2xl font-bold text-slate-800 mb-5 flex items-center gap-2">
+            <i class="fa fa-compass text-blue-600"></i> Extras &amp; Activities
+          </h2>
+          <div class="space-y-3">
+            ${acts.map(a => {
+              const t = ACT_TYPES[a.type]||ACT_TYPES.other;
+              return `
+              <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex gap-4 items-start">
+                <div class="w-10 h-10 rounded-xl ${actTypeColor(a.type)} flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="fa ${t.icon} text-sm"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-slate-800">${esc(a.title||t.label)}</div>
+                  <div class="text-xs text-slate-400 mb-1">${t.label}</div>
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
+                    ${a.date?`<span><i class="fa fa-calendar mr-1 text-slate-300"></i>${fmtDate(a.date)}${a.endDate&&a.endDate!==a.date?' – '+fmtDate(a.endDate):''}</span>`:''}
+                    ${a.time?`<span><i class="fa fa-clock mr-1 text-slate-300"></i>${fmtTime(a.time)}</span>`:''}
+                    ${a.location?`<span><i class="fa fa-location-dot mr-1 text-slate-300"></i>${esc(a.location)}</span>`:''}
+                    ${a.cost?`<span><i class="fa fa-dollar-sign mr-1 text-slate-300"></i>${esc(a.cost)}</span>`:''}
+                    ${a.confirmation?`<span><i class="fa fa-ticket mr-1 text-slate-300"></i>Conf: ${esc(a.confirmation)}</span>`:''}
+                  </div>
+                  ${a.notes?`<p class="text-xs text-slate-400 mt-1 italic">${esc(a.notes)}</p>`:''}
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+        </section>`:''}
+
+      <!-- PACKING LIST -->
+      ${D.packing.length?`
+        <section>
+          <h2 class="text-2xl font-bold text-slate-800 mb-5 flex items-center gap-2">
+            <i class="fa fa-suitcase-rolling text-blue-600"></i> Packing List
+          </h2>
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+            <div class="mb-6">
+              <div class="flex justify-between text-sm font-medium text-slate-700 mb-2">
+                <span>Overall Progress</span>
+                <span>${prog.p} / ${prog.t} packed (${prog.pct}%)</span>
+              </div>
+              <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" style="width:${prog.pct}%"></div>
+              </div>
+            </div>
+            <div class="space-y-6">
+              ${cats.map(cat=>{
+                const items=grouped[cat];
+                const cp=items.filter(i=>i.packed).length;
+                return `
+                <div>
+                  <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-semibold text-slate-700"><i class="fa fa-tag text-blue-400 mr-2 text-sm"></i>${esc(cat)}</h3>
+                    <span class="text-slate-400 text-sm">${cp}/${items.length}</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${items.map(item=>`
+                      <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${item.packed?'bg-green-50 border-green-100':'bg-slate-50 border-slate-100 hover:bg-slate-100'}">
+                        <input type="checkbox" class="pkchk w-4 h-4 accent-blue-600 rounded flex-shrink-0" data-id="${item.id}" ${item.packed?'checked':''}>
+                        <span class="text-sm ${item.packed?'line-through text-slate-400':'text-slate-700'} flex-1">${esc(item.item)}</span>
+                        ${item.notes?`<span class="text-slate-400 text-xs">${esc(item.notes)}</span>`:''}
+                      </label>`).join('')}
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+            ${prog.pct===100?`<div class="mt-6 p-4 bg-green-50 border border-green-100 rounded-xl text-center"><div class="text-2xl mb-1">🎉</div><div class="text-green-700 font-semibold">All packed and ready to go!</div></div>`:''}
+          </div>
+        </section>`:''}
+    </div>`}
+  </div>`;
+}
+
+function flightCard(f) {
+  return `
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden card-lift">
+    <div class="bg-gradient-to-r from-blue-700 to-cyan-500 text-white px-5 py-4 flex justify-between items-start">
+      <div>
+        <div class="font-bold text-lg">${esc(f.airline)||'Airline'}</div>
+        <div class="text-blue-100 text-sm">Flight ${esc(f.flightNum)||'—'}</div>
+      </div>
+      <div class="text-right">
+        ${f.price?`<div class="font-bold text-lg">${esc(f.price)}</div>`:''}
+        ${f.cls?`<div class="text-blue-100 text-sm">${esc(f.cls)}</div>`:''}
+      </div>
+    </div>
+    <div class="px-5 py-5">
+      <div class="flex items-center justify-between gap-3">
+        <div class="text-center flex-1">
+          <div class="text-2xl font-black text-slate-800">${esc(f.origCode)||'—'}</div>
+          <div class="text-slate-500 text-xs mt-0.5 leading-tight">${esc(f.orig)||''}</div>
+          <div class="text-slate-800 font-semibold mt-1">${fmtTime(f.depTime)}</div>
+          <div class="text-slate-400 text-xs">${fmtShort(f.depDate)}</div>
+        </div>
+        <div class="text-center flex-shrink-0">
+          <div class="text-slate-300 text-xl">✈</div>
+          ${f.dur?`<div class="text-slate-400 text-xs mt-1">${esc(f.dur)}</div>`:''}
+        </div>
+        <div class="text-center flex-1">
+          <div class="text-2xl font-black text-slate-800">${esc(f.destCode)||'—'}</div>
+          <div class="text-slate-500 text-xs mt-0.5 leading-tight">${esc(f.dest)||''}</div>
+          <div class="text-slate-800 font-semibold mt-1">${fmtTime(f.arrTime)}</div>
+          <div class="text-slate-400 text-xs">${fmtShort(f.arrDate)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-dashed border-slate-200 px-5 py-3 bg-slate-50 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+      ${f.conf?`<span class="text-slate-400">Conf: <span class="font-semibold text-slate-700">${esc(f.conf)}</span></span>`:''}
+      ${f.seat?`<span class="text-slate-400">Seat: <span class="font-semibold text-slate-700">${esc(f.seat)}</span></span>`:''}
+      ${f.terminal?`<span class="text-slate-400">Terminal: <span class="font-semibold text-slate-700">${esc(f.terminal)}</span></span>`:''}
+    </div>
+    ${f.notes?`<div class="px-5 pb-3 text-slate-400 text-xs italic">${esc(f.notes)}</div>`:''}
+  </div>`;
+}
+
+function cruiseDetailsSection() {
+  const c = D.cruise;
+  const rows = [
+    ['fa-ship','Cruise Line',c.cruiseLine],
+    ['fa-ship','Ship',c.ship],
+    ['fa-calendar-check','Departure',fmtDate(c.departureDate)],
+    ['fa-calendar-xmark','Return',fmtDate(c.returnDate)],
+    ['fa-anchor','Departure Port',c.departurePort],
+    ['fa-anchor','Return Port',c.returnPort],
+    ['fa-door-open','Room Number',c.roomNumber],
+    ['fa-bed','Room Type',c.roomType],
+    ['fa-layer-group','Deck',c.deckNumber?`Deck ${c.deckNumber}`:null],
+    ['fa-ticket','Booking #',c.bookingNumber],
+    ['fa-users','Passengers',c.passengers],
+    ['fa-utensils','Package',c.package],
+    ['fa-dollar-sign','Total Price',c.totalPrice],
+    ['fa-dollar-sign','Per Person',c.pricePerPerson],
+  ].filter(r=>r[2]);
+  if (!rows.length && !c.notes) return '';
+  return `
+  <section>
+    <h2 class="text-2xl font-bold text-slate-800 mb-5 flex items-center gap-2">
+      <i class="fa fa-ship text-blue-600"></i> Cruise Details
+    </h2>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        ${rows.map(([icon,label,val])=>`
+          <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa ${icon} text-blue-600 text-sm"></i>
+            </div>
+            <div>
+              <div class="text-slate-400 text-xs font-medium uppercase tracking-wide">${label}</div>
+              <div class="text-slate-800 font-semibold mt-0.5 text-sm">${esc(val)}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      ${c.notes?`<div class="mt-4 p-4 bg-amber-50 border border-amber-100 rounded-xl">
+        <div class="text-amber-700 font-medium mb-1 text-sm"><i class="fa fa-note-sticky mr-1"></i>Notes</div>
+        <p class="text-slate-700 text-sm whitespace-pre-wrap">${esc(c.notes)}</p>
+      </div>`:''}
+    </div>
+  </section>`;
+}
+
+// ────────────────────────────────────────────────────────────
+// ADMIN PAGE
+// ────────────────────────────────────────────────────────────
+function adminPage() {
+  const tabs = [
+    {id:'cruise',icon:'fa-ship',label:'Trip Info'},
+    {id:'flights',icon:'fa-plane',label:'Flights'},
+    {id:'itinerary',icon:'fa-map-location-dot',label:'Itinerary'},
+    {id:'packing',icon:'fa-suitcase-rolling',label:'Packing'},
+    {id:'activities',icon:'fa-compass',label:'Extras'},
+    {id:'budget',icon:'fa-dollar-sign',label:'Budget'},
+    {id:'settings',icon:'fa-gear',label:'Settings'},
+  ];
+  return `
+  <div class="max-w-5xl mx-auto px-4 pt-6 fade-in">
+    <h2 class="text-2xl font-bold text-slate-800 mb-5">Admin Panel</h2>
+    <div class="flex overflow-x-auto gap-1 bg-white rounded-xl border border-slate-200 p-1 mb-6 no-scrollbar">
+      ${tabs.map(t=>`
+        <button onclick="setTab('${t.id}')"
+          class="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${S.tab===t.id?'bg-blue-600 text-white':'text-slate-600 hover:bg-slate-100'}">
+          <i class="fa ${t.icon}"></i><span class="hidden sm:inline">${t.label}</span>
+        </button>`).join('')}
+    </div>
+    <div>
+      ${S.tab==='cruise'?adminCruise():''}
+      ${S.tab==='flights'?adminFlights():''}
+      ${S.tab==='itinerary'?adminItinerary():''}
+      ${S.tab==='packing'?adminPacking():''}
+      ${S.tab==='activities'?adminActivities():''}
+      ${S.tab==='budget'?adminBudget():''}
+      ${S.tab==='settings'?adminSettings():''}
+    </div>
+  </div>`;
+}
+
+// ── ADMIN: CRUISE ────────────────────────────────────────────
+function adminCruise() {
+  const c = D.cruise;
+  return `
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h3 class="text-lg font-bold text-slate-800 mb-6">Trip Details</h3>
+    <form id="cf" class="space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        ${fi('text','c-name','Cruise Name / Title',c.name,'e.g. Caribbean Adventure 2026')}
+        ${fi('text','c-line','Cruise Line',c.cruiseLine,'e.g. Royal Caribbean')}
+        ${fi('text','c-ship','Ship Name',c.ship,'e.g. Symphony of the Seas')}
+        ${fi('text','c-book','Booking / Reservation #',c.bookingNumber)}
+        ${fi('date','c-dep','Departure Date',c.departureDate)}
+        ${fi('date','c-ret','Return Date',c.returnDate)}
+        ${fi('text','c-dport','Departure Port',c.departurePort,'e.g. Miami, FL')}
+        ${fi('text','c-rport','Return Port (if different)',c.returnPort)}
+        ${fi('text','c-room','Room Number',c.roomNumber)}
+        ${fi('text','c-rtype','Room Type',c.roomType,'e.g. Ocean View Balcony')}
+        ${fi('text','c-deck','Deck Number',c.deckNumber)}
+        ${fi('text','c-pax','Passengers',c.passengers,'e.g. 2 Adults')}
+        ${fi('text','c-pkg','Package',c.package,'e.g. Deluxe Beverage Package')}
+        ${fi('text','c-total','Total Price',c.totalPrice,'e.g. $4,500')}
+        ${fi('text','c-pp','Price Per Person',c.pricePerPerson,'e.g. $2,250')}
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+        <textarea id="c-notes" rows="3" placeholder="Any additional notes..."
+          class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none">${esc(c.notes)}</textarea>
+      </div>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors">
+        <i class="fa fa-save mr-2"></i>Save Changes
+      </button>
+    </form>
+  </div>`;
+}
+
+// ── ADMIN: FLIGHTS ───────────────────────────────────────────
+function adminFlights() {
+  return `
+  <div class="space-y-4">
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-800">Flights</h3>
+      <button onclick="openModal('flight',null)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">
+        <i class="fa fa-plus mr-1"></i>Add Flight
+      </button>
+    </div>
+    ${D.flights.length===0?`
+      <div class="bg-white rounded-2xl border border-slate-100 p-12 text-center">
+        <div class="text-5xl mb-3">✈️</div>
+        <p class="text-slate-500">No flights yet. Click "Add Flight" to get started.</p>
+      </div>`:`
+      <div class="space-y-2">
+        ${D.flights.map(f=>`
+          <div class="bg-white rounded-xl border border-slate-100 p-4 flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <i class="fa fa-plane-${f.dir==='ret'?'arrival':'departure'} text-blue-600 text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-800">${esc(f.airline)||'Unknown'} ${esc(f.flightNum)||''}
+                <span class="text-xs text-slate-400 ml-1">${f.dir==='out'?'Outbound':'Return'}</span>
+              </div>
+              <div class="text-slate-500 text-sm">${esc(f.orig)||'?'} → ${esc(f.dest)||'?'}${f.depDate?` · ${fmtShort(f.depDate)}`:''}</div>
+            </div>
+            <div class="flex gap-1 flex-shrink-0">
+              <button onclick="openModal('flight',${f.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm"><i class="fa fa-pen"></i></button>
+              <button onclick="delFlight(${f.id})" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors text-sm"><i class="fa fa-trash"></i></button>
+            </div>
+          </div>`).join('')}
+      </div>`}
+  </div>`;
+}
+
+// ── ADMIN: ITINERARY ─────────────────────────────────────────
+function adminItinerary() {
+  const sorted = [...D.stops].sort((a,b)=>(a.day||0)-(b.day||0));
+  return `
+  <div class="space-y-4">
+    <div class="flex justify-between items-center">
+      <h3 class="text-lg font-bold text-slate-800">Itinerary Stops</h3>
+      <button onclick="openModal('stop',null)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">
+        <i class="fa fa-plus mr-1"></i>Add Stop
+      </button>
+    </div>
+    ${sorted.length===0?`
+      <div class="bg-white rounded-2xl border border-slate-100 p-12 text-center">
+        <div class="text-5xl mb-3">🗺️</div>
+        <p class="text-slate-500">No stops yet. Click "Add Stop" to build your itinerary.</p>
+      </div>`:`
+      <div class="space-y-2">
+        ${sorted.map(s=>{
+          const st=stopStyle(s.type);
+          return `
+          <div class="bg-white rounded-xl border border-slate-100 p-4 flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full ${st.bg} flex items-center justify-center flex-shrink-0">
+              <i class="fa ${st.icon} ${st.tx} text-sm"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-slate-800">Day ${s.day||'?'}: ${esc(s.location)||'Unknown'}</div>
+              <div class="text-slate-500 text-sm">${st.label}${s.date?` · ${fmtShort(s.date)}`:''}${s.arrivalTime?` · Arr ${fmtTime(s.arrivalTime)}`:''}${s.departureTime?` · Dep ${fmtTime(s.departureTime)}`:''}</div>
+            </div>
+            <div class="flex gap-1 flex-shrink-0">
+              <button onclick="openModal('stop',${s.id})" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors text-sm"><i class="fa fa-pen"></i></button>
+              <button onclick="delStop(${s.id})" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors text-sm"><i class="fa fa-trash"></i></button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`}
+  </div>`;
+}
+
+// ── ADMIN: PACKING ───────────────────────────────────────────
+function adminPacking() {
+  const grouped = groupBy(D.packing,'category');
+  const cats = Object.keys(grouped).sort();
+  return `
+  <div class="space-y-4">
+    <div class="flex justify-between items-center flex-wrap gap-2">
+      <h3 class="text-lg font-bold text-slate-800">Packing List</h3>
+      <div class="flex gap-2">
+        ${D.packing.length===0?`<button onclick="addDefaults()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm transition-colors"><i class="fa fa-magic-wand-sparkles mr-1"></i>Load Suggestions</button>`:''}
+        <button onclick="openModal('pack',null)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors"><i class="fa fa-plus mr-1"></i>Add Item</button>
+      </div>
+    </div>
+    ${D.packing.length===0?`
+      <div class="bg-white rounded-2xl border border-slate-100 p-12 text-center">
+        <div class="text-5xl mb-3">🧳</div>
+        <p class="text-slate-500 mb-4">No items yet.</p>
+        <button onclick="addDefaults()" class="text-blue-600 hover:underline text-sm font-medium"><i class="fa fa-magic-wand-sparkles mr-1"></i>Load ~40 suggested packing items</button>
+      </div>`:`
+      <div class="space-y-4">
+        ${cats.map(cat=>{
+          const items=grouped[cat];
+          return `
+          <div class="bg-white rounded-2xl border border-slate-100 p-5">
+            <h4 class="font-semibold text-slate-700 mb-3"><i class="fa fa-tag text-blue-400 mr-1 text-sm"></i>${esc(cat)} <span class="text-slate-400 font-normal text-sm">(${items.length})</span></h4>
+            <div class="space-y-1">
+              ${items.map(item=>`
+                <div class="flex items-center justify-between gap-2 py-1.5 border-b border-slate-50 last:border-0">
+                  <span class="text-slate-700 text-sm">${esc(item.item)}</span>
+                  ${item.notes?`<span class="text-slate-400 text-xs flex-1 ml-2">${esc(item.notes)}</span>`:'<span class="flex-1"></span>'}
+                  <div class="flex gap-1">
+                    <button onclick="openModal('pack',${item.id})" class="px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><i class="fa fa-pen"></i></button>
+                    <button onclick="delPack(${item.id})" class="px-2 py-1 text-xs text-red-500 hover:bg-red-50 rounded-lg transition-colors"><i class="fa fa-trash"></i></button>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`}
+  </div>`;
+}
+
+// ── BUDGET ───────────────────────────────────────────────────
+function parseCost(str) {
+  if (!str) return 0;
+  const n = parseFloat(String(str).replace(/[^0-9.]/g,''));
+  return isNaN(n) ? 0 : n;
+}
+function budgetItems() {
+  const items = [];
+  if (D.cruise.totalPrice) items.push({ label:'Cruise', icon:'fa-ship', cost:parseCost(D.cruise.totalPrice), cls:'bg-blue-100 text-blue-600' });
+  D.flights.forEach(f => {
+    if (f.price) items.push({ label:`${f.dir==='ret'?'Return':'Outbound'} Flight${f.airline?' ('+f.airline+')':''}`, icon:'fa-plane', cost:parseCost(f.price), cls:'bg-cyan-100 text-cyan-600' });
+  });
+  (D.activities||[]).forEach(a => {
+    if (a.cost) items.push({ label:a.title||(ACT_TYPES[a.type]?.label)||'Activity', icon:ACT_TYPES[a.type]?.icon||'fa-star', cost:parseCost(a.cost), cls:'bg-purple-100 text-purple-600' });
+  });
+  return items;
+}
+function adminBudget() {
+  if (!D.budget) D.budget = { target:'' };
+  const items = budgetItems();
+  const total = items.reduce((s,i)=>s+i.cost, 0);
+  const target = parseCost(D.budget.target);
+  const pct = target ? Math.min(Math.round(total/target*100), 100) : 0;
+  const remaining = target ? target - total : null;
+  const fmt = n => '$'+n.toLocaleString(undefined,{maximumFractionDigits:0});
+  return `
+  <div class="space-y-5">
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <h3 class="text-lg font-bold text-slate-800 mb-1">Budget Target</h3>
+      <p class="text-slate-500 text-sm mb-4">Set your total trip budget and we'll track it against your logged costs.</p>
+      <form id="bdf" class="flex gap-3 max-w-sm">
+        <div class="relative flex-1">
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+          <input type="text" id="bd-target" value="${esc(D.budget.target)}" placeholder="e.g. 8000"
+            class="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+        </div>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">Save</button>
+      </form>
+    </div>
+    ${items.length || target ? `
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex items-end justify-between mb-5">
+        <h3 class="text-lg font-bold text-slate-800">Breakdown</h3>
+        <div class="text-right">
+          <div class="text-3xl font-bold text-slate-800">${fmt(total)}</div>
+          ${target?`<div class="text-sm text-slate-500">of ${fmt(target)} budget</div>`:'<div class="text-xs text-slate-400">total logged</div>'}
+        </div>
+      </div>
+      ${target?`
+      <div class="mb-5">
+        <div class="flex justify-between text-sm mb-1.5">
+          <span class="text-slate-500">${pct}% spent</span>
+          <span class="font-semibold ${remaining>=0?'text-green-600':'text-red-500'}">${remaining>=0?fmt(remaining)+' remaining':fmt(Math.abs(remaining))+' over budget'}</span>
+        </div>
+        <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all duration-500 ${pct>=100?'bg-red-500':pct>=80?'bg-amber-500':'bg-green-500'}" style="width:${pct}%"></div>
+        </div>
+      </div>`:''}
+      <div class="space-y-3">
+        ${items.map(i=>`
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg ${i.cls} flex items-center justify-center flex-shrink-0">
+            <i class="fa ${i.icon} text-xs"></i>
+          </div>
+          <span class="flex-1 text-sm text-slate-700">${esc(i.label)}</span>
+          <span class="font-semibold text-slate-800">${fmt(i.cost)}</span>
+          ${target?`<div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-400 rounded-full" style="width:${Math.min(Math.round(i.cost/total*100),100)}%"></div></div>`:''}
+        </div>`).join('')}
+      </div>
+    </div>`:
+    `<div class="bg-white rounded-2xl border border-dashed border-slate-200 p-10 text-center text-slate-400">
+      <i class="fa fa-dollar-sign text-3xl mb-3 block text-slate-300"></i>
+      <p class="font-medium">No costs logged yet</p>
+      <p class="text-sm mt-1">Add prices to your cruise, flights, and activities — they'll automatically appear here.</p>
+    </div>`}
+  </div>`;
+}
+
+// ── ADMIN: ACTIVITIES ────────────────────────────────────────
+const ACT_TYPES = {
+  hotel:      { icon:'fa-hotel',      label:'Hotel / Accommodation', color:'purple' },
+  transport:  { icon:'fa-car',        label:'Transportation',         color:'orange' },
+  activity:   { icon:'fa-compass',    label:'Activity / Tour',        color:'green'  },
+  restaurant: { icon:'fa-utensils',   label:'Restaurant / Dining',    color:'red'    },
+  other:      { icon:'fa-star',       label:'Other',                  color:'slate'  },
+};
+function actTypeColor(type) {
+  const map = { purple:'bg-purple-100 text-purple-600', orange:'bg-orange-100 text-orange-600',
+                green:'bg-green-100 text-green-600', red:'bg-red-100 text-red-600',
+                slate:'bg-slate-100 text-slate-600' };
+  return map[ACT_TYPES[type]?.color] || map.slate;
+}
+
+function adminActivities() {
+  const acts = [...(D.activities||[])].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  return `
+  <div class="space-y-4">
+    <div class="flex justify-between items-center">
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">Extras &amp; Activities</h3>
+        <p class="text-slate-500 text-sm mt-0.5">Hotels, transportation, pre/post-trip activities, dining, and more.</p>
+      </div>
+      <button onclick="openModal('activity',null)" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors flex-shrink-0">
+        <i class="fa fa-plus mr-1"></i>Add
+      </button>
+    </div>
+    ${acts.length===0?`
+      <div class="bg-white rounded-2xl border border-dashed border-slate-200 p-10 text-center text-slate-400">
+        <i class="fa fa-compass text-3xl mb-3 block text-slate-300"></i>
+        <p class="font-medium">No extras yet</p>
+        <p class="text-sm mt-1">Add hotels, transportation, tours, dining reservations, and anything else.</p>
+      </div>`:
+    acts.map(a => {
+      const t = ACT_TYPES[a.type] || ACT_TYPES.other;
+      return `
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex gap-4 items-start">
+        <div class="w-10 h-10 rounded-xl ${actTypeColor(a.type)} flex items-center justify-center flex-shrink-0">
+          <i class="fa ${t.icon} text-sm"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="font-semibold text-slate-800">${esc(a.title||t.label)}</div>
+              <div class="text-xs text-slate-400 mt-0.5">${t.label}</div>
+            </div>
+            <div class="flex gap-1 flex-shrink-0">
+              <button onclick="openModal('activity',${a.id})" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"><i class="fa fa-pen text-xs"></i></button>
+              <button onclick="delActivity(${a.id})" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="fa fa-trash text-xs"></i></button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-slate-500">
+            ${a.date?`<span><i class="fa fa-calendar mr-1 text-slate-300"></i>${fmtDate(a.date)}${a.endDate&&a.endDate!==a.date?' – '+fmtDate(a.endDate):''}</span>`:''}
+            ${a.time?`<span><i class="fa fa-clock mr-1 text-slate-300"></i>${fmtTime(a.time)}</span>`:''}
+            ${a.location?`<span><i class="fa fa-location-dot mr-1 text-slate-300"></i>${esc(a.location)}</span>`:''}
+            ${a.cost?`<span><i class="fa fa-dollar-sign mr-1 text-slate-300"></i>${esc(a.cost)}</span>`:''}
+            ${a.confirmation?`<span><i class="fa fa-ticket mr-1 text-slate-300"></i>Conf: ${esc(a.confirmation)}</span>`:''}
+          </div>
+          ${a.notes?`<p class="text-xs text-slate-400 mt-2 italic">${esc(a.notes)}</p>`:''}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// ── ADMIN: SETTINGS ──────────────────────────────────────────
+function adminSettings() {
+  return `
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-8">
+    <div>
+      <h3 class="text-lg font-bold text-slate-800 mb-1">Share with a Friend</h3>
+      <p class="text-slate-500 text-sm mb-4">Generate a link your friend can open to import all your trip info.</p>
+      <button onclick="openShareModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors">
+        <i class="fa fa-share-nodes mr-2"></i>Generate Share Link
+      </button>
+      <div class="mt-5">
+        <p class="text-sm font-medium text-slate-700 mb-2">Received a share link or code from a friend?</p>
+        <div class="flex gap-2 max-w-lg">
+          <input type="text" id="share-paste" placeholder="Paste share link or code here…"
+            class="flex-1 px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+          <button onclick="importFromPaste()" class="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors flex-shrink-0">
+            <i class="fa fa-file-import mr-1"></i>Import
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-slate-100 pt-6">
+      <h3 class="text-lg font-bold text-slate-800 mb-2">Backup &amp; Restore</h3>
+      <p class="text-slate-500 text-sm mb-4">Export the current trip as a file, import a backup as a new trip, or reset the current trip's data.</p>
+      <div class="flex flex-wrap gap-3">
+        <button onclick="exportData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm transition-colors"><i class="fa fa-download mr-2"></i>Export Current Trip</button>
+        <button onclick="document.getElementById('import-file').click()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-4 py-2 rounded-xl text-sm transition-colors"><i class="fa fa-upload mr-2"></i>Import Trip from File</button>
+        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(this)">
+        <button onclick="confirmReset()" class="bg-red-50 hover:bg-red-100 text-red-600 font-medium px-4 py-2 rounded-xl text-sm transition-colors"><i class="fa fa-trash mr-2"></i>Reset Current Trip</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ────────────────────────────────────────────────────────────
+// MODALS
+// ────────────────────────────────────────────────────────────
+function modalHtml() {
+  if (S.modal.type==='flight')   return flightModal();
+  if (S.modal.type==='stop')     return stopModal();
+  if (S.modal.type==='pack')     return packModal();
+  if (S.modal.type==='share')    return shareModal();
+  if (S.modal.type==='activity') return activityModal();
+  if (S.modal.type==='trips')    return tripsModal();
+  return '';
+}
+
+function shareModal() {
+  const link = S.modal.link;
+  return `
+  <div class="modal-overlay" id="mover">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-slate-800">Share Trip</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"><i class="fa fa-xmark"></i></button>
+        </div>
+        <p class="text-slate-500 text-sm mb-4">Send this link to a friend. When they open it, your trip info will load automatically.</p>
+        <div class="flex gap-2 mb-4">
+          <input id="share-link-box" type="text" readonly value="${esc(link)}"
+            class="flex-1 px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-sm text-slate-700 focus:outline-none cursor-pointer"
+            onclick="this.select()">
+          <button onclick="copyShareLink()" id="copy-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors flex-shrink-0">
+            <i class="fa fa-copy mr-1"></i>Copy
+          </button>
+        </div>
+        <div id="copy-confirm" class="hidden text-green-600 text-sm font-medium mb-3"><i class="fa fa-circle-check mr-1"></i>Link copied to clipboard!</div>
+        ${navigator.share ? `
+        <button onclick="nativeShare('${esc(link)}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-colors">
+          <i class="fa fa-share-nodes mr-2"></i>Share via…
+        </button>` : ''}
+        <p class="text-slate-400 text-xs mt-4"><i class="fa fa-circle-info mr-1"></i>Tip: if the link is too long for SMS, use <strong>Export File</strong> and send the file directly.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+
+function tripsModal() {
+  return `
+  <div class="modal-overlay" id="mover">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-slate-800"><i class="fa fa-layer-group text-blue-600 mr-2"></i>My Trips</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"><i class="fa fa-xmark"></i></button>
+        </div>
+        <div class="space-y-2 mb-5">
+          ${T.trips.map(t => {
+            const isActive = t.id === T.activeId;
+            const name = t.cruise?.name || 'Unnamed Trip';
+            const ship = t.cruise?.cruiseLine || t.cruise?.ship || '';
+            const date = t.cruise?.departureDate ? fmtShort(t.cruise.departureDate) : '';
+            return `
+            <div class="flex items-center gap-3 p-3 rounded-xl border ${isActive?'border-blue-200 bg-blue-50':'border-slate-100 hover:bg-slate-50'} transition-colors">
+              <div class="w-9 h-9 rounded-lg ${isActive?'bg-blue-600':'bg-slate-200'} flex items-center justify-center flex-shrink-0">
+                <i class="fa fa-ship text-sm ${isActive?'text-white':'text-slate-500'}"></i>
+              </div>
+              <div class="flex-1 min-w-0 ${isActive?'':'cursor-pointer'}" ${isActive?'':'onclick="switchTrip('+t.id+')"'}>
+                <div class="font-semibold text-slate-800 text-sm truncate">${esc(name)}</div>
+                ${ship||date?`<div class="text-xs text-slate-400 truncate">${[ship,date].filter(Boolean).join(' · ')}</div>`:''}
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0">
+                ${isActive
+                  ? `<span class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">Active</span>`
+                  : `<button onclick="switchTrip(${t.id})" class="text-xs font-semibold text-slate-500 hover:text-blue-600 px-2 py-1 rounded-lg hover:bg-blue-50 transition-colors">Switch</button>`}
+                ${T.trips.length>1?`<button onclick="deleteTrip(${t.id})" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors"><i class="fa fa-trash text-xs"></i></button>`:''}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <button onclick="newTrip()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+          <i class="fa fa-plus"></i>New Trip
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function activityModal() {
+  const isNew = S.modal.id===null;
+  const a = isNew ? {} : (D.activities||[]).find(x=>x.id===S.modal.id)||{};
+  return `
+  <div class="modal-overlay" id="mover">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
+      <div class="p-6 overflow-y-auto max-h-[85vh]">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-slate-800">${isNew?'Add Extra / Activity':'Edit Extra / Activity'}</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"><i class="fa fa-xmark"></i></button>
+        </div>
+        <form id="acf" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Type</label>
+            <select id="ac-type" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+              ${Object.entries(ACT_TYPES).map(([v,t])=>`<option value="${v}" ${a.type===v?'selected':''}>${t.label}</option>`).join('')}
+            </select>
+          </div>
+          ${fi('text','ac-title','Title / Name',a.title,'e.g. Marriott Miami, Shuttle to Port, City Tour…')}
+          <div class="grid grid-cols-2 gap-4">
+            ${fi('date','ac-date','Start Date',a.date)}
+            ${fi('date','ac-edate','End Date (optional)',a.endDate)}
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            ${fi('time','ac-time','Time',a.time)}
+            ${fi('text','ac-cost','Cost',a.cost,'e.g. $120')}
+          </div>
+          ${fi('text','ac-loc','Location / Venue',a.location,'e.g. 1234 Ocean Dr, Miami')}
+          ${fi('text','ac-conf','Confirmation #',a.confirmation)}
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+            <textarea id="ac-notes" rows="2" placeholder="Any extra details…"
+              class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none">${esc(a.notes||'')}</textarea>
+          </div>
+          <div class="flex gap-3 pt-1">
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm">
+              <i class="fa fa-save mr-2"></i>${isNew?'Add':'Save Changes'}
+            </button>
+            <button type="button" onclick="closeModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition-colors text-sm">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>`;
+}
+
+function flightModal() {
+  const isNew = S.modal.id===null;
+  const f = isNew ? {} : D.flights.find(x=>x.id===S.modal.id)||{};
+  return `
+  <div class="modal-overlay" id="mover">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-4">
+      <div class="p-6 overflow-y-auto max-h-[85vh]">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-slate-800">${isNew?'Add Flight':'Edit Flight'}</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"><i class="fa fa-xmark"></i></button>
+        </div>
+        <form id="flf" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Direction</label>
+            <select id="fl-dir" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+              <option value="out" ${f.dir==='out'?'selected':''}>Outbound</option>
+              <option value="ret" ${f.dir==='ret'?'selected':''}>Return</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            ${fi('text','fl-airline','Airline',f.airline,'e.g. Delta')}
+            ${fi('text','fl-num','Flight Number',f.flightNum,'e.g. DL1234')}
+          </div>
+          <div class="border-t border-slate-100 pt-4">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Departure</p>
+            <div class="grid grid-cols-2 gap-4">
+              ${fi('text','fl-orig','Origin City / Airport',f.orig,"e.g. Chicago O'Hare")}
+              ${fi('text','fl-origc','Origin Code',f.origCode,'e.g. ORD')}
+              ${fi('date','fl-dd','Departure Date',f.depDate)}
+              ${fi('time','fl-dt','Departure Time',f.depTime)}
+            </div>
+          </div>
+          <div class="border-t border-slate-100 pt-4">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Arrival</p>
+            <div class="grid grid-cols-2 gap-4">
+              ${fi('text','fl-dest','Destination City / Airport',f.dest,'e.g. Miami International')}
+              ${fi('text','fl-destc','Destination Code',f.destCode,'e.g. MIA')}
+              ${fi('date','fl-ad','Arrival Date',f.arrDate)}
+              ${fi('time','fl-at','Arrival Time',f.arrTime)}
+            </div>
+          </div>
+          <div class="border-t border-slate-100 pt-4 grid grid-cols-2 gap-4">
+            ${fi('text','fl-dur','Duration',f.dur,'e.g. 2h 45m')}
+            ${fi('text','fl-price','Price',f.price,'e.g. $350')}
+            ${fi('text','fl-conf','Confirmation #',f.conf)}
+            ${fi('text','fl-seat','Seat',f.seat,'e.g. 23A')}
+            ${fi('text','fl-cls','Class',f.cls,'e.g. Economy')}
+            ${fi('text','fl-term','Terminal',f.terminal)}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+            <textarea id="fl-notes" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none">${esc(f.notes)}</textarea>
+          </div>
+          <div class="flex gap-3 pt-1">
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"><i class="fa fa-save mr-2"></i>${isNew?'Add Flight':'Save Changes'}</button>
+            <button type="button" onclick="closeModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition-colors text-sm">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>`;
+}
+
+function stopModal() {
+  const isNew = S.modal.id===null;
+  const s = isNew ? {} : D.stops.find(x=>x.id===S.modal.id)||{};
+  return `
+  <div class="modal-overlay" id="mover">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-4">
+      <div class="p-6 overflow-y-auto max-h-[85vh]">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-slate-800">${isNew?'Add Stop':'Edit Stop'}</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"><i class="fa fa-xmark"></i></button>
+        </div>
+        <form id="stf" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            ${fi('number','st-day','Day Number',s.day)}
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1">Stop Type</label>
+              <select id="st-type" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                <option value="port" ${s.type==='port'?'selected':''}>Port Day</option>
+                <option value="sea" ${s.type==='sea'?'selected':''}>Sea Day</option>
+                <option value="embarkation" ${s.type==='embarkation'?'selected':''}>Embarkation</option>
+                <option value="disembarkation" ${s.type==='disembarkation'?'selected':''}>Disembarkation</option>
+              </select>
+            </div>
+          </div>
+          ${fi('text','st-loc','Location',s.location,'e.g. Nassau, Bahamas')}
+          <div class="grid grid-cols-2 gap-4">
+            ${fi('date','st-date','Date',s.date)}
+            ${fi('text','st-exc','Excursion / Activity',s.excursion,'e.g. Snorkeling Tour')}
+            ${fi('time','st-arr','Arrival Time',s.arrivalTime)}
+            ${fi('time','st-dep','Departure Time',s.departureTime)}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+            <textarea id="st-notes" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none">${esc(s.notes)}</textarea>
+          </div>
+          <div class="flex gap-3 pt-1">
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"><i class="fa fa-save mr-2"></i>${isNew?'Add Stop':'Save Changes'}</button>
+            <button type="button" onclick="closeModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition-colors text-sm">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>`;
+}
+
+function packModal() {
+  const isNew = S.modal.id===null;
+  const item = isNew ? {} : D.packing.find(x=>x.id===S.modal.id)||{};
+  const cats = [...new Set(D.packing.map(i=>i.category).filter(Boolean))];
+  return `
+  <div class="modal-overlay" id="mover">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md my-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-slate-800">${isNew?'Add Item':'Edit Item'}</h3>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"><i class="fa fa-xmark"></i></button>
+        </div>
+        <form id="pkf" class="space-y-4">
+          <datalist id="cat-dl">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+            <input type="text" id="pk-cat" list="cat-dl" value="${esc(item.category)}" placeholder="e.g. Clothing, Documents, Toiletries"
+              class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+          </div>
+          ${fi('text','pk-item','Item Name',item.item,'e.g. Sunscreen')}
+          ${fi('text','pk-notes','Notes (optional)',item.notes,'e.g. Pack 2')}
+          <div class="flex gap-3 pt-1">
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"><i class="fa fa-save mr-2"></i>${isNew?'Add Item':'Save Changes'}</button>
+            <button type="button" onclick="closeModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl transition-colors text-sm">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── FORM FIELD HELPER ────────────────────────────────────────
+function fi(type, id, label, value, placeholder='') {
+  const v = value!=null ? String(value) : '';
+  return `
+  <div>
+    <label class="block text-sm font-medium text-slate-700 mb-1">${label}</label>
+    <input type="${type}" id="${id}" value="${esc(v)}" placeholder="${esc(placeholder)}"
+      class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+  </div>`;
+}
+
+// ────────────────────────────────────────────────────────────
+// EVENT BINDING
+// ────────────────────────────────────────────────────────────
+function bind() {
+  // Cruise form
+  const cf = document.getElementById('cf');
+  if (cf) cf.addEventListener('submit', e => {
+    e.preventDefault();
+    D.cruise = {
+      name:val('c-name'), cruiseLine:val('c-line'), ship:val('c-ship'),
+      bookingNumber:val('c-book'), departureDate:val('c-dep'), returnDate:val('c-ret'),
+      departurePort:val('c-dport'), returnPort:val('c-rport'),
+      roomNumber:val('c-room'), roomType:val('c-rtype'), deckNumber:val('c-deck'),
+      passengers:val('c-pax'), package:val('c-pkg'),
+      totalPrice:val('c-total'), pricePerPerson:val('c-pp'),
+      notes: (document.getElementById('c-notes')||{}).value||''
+    };
+    save(); toast('Trip details saved!'); softGo();
+  });
+
+  // Flight form
+  const flf = document.getElementById('flf');
+  if (flf) flf.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = S.modal.id;
+    const flight = {
+      id: id||uid(D.flights),
+      dir: document.getElementById('fl-dir').value,
+      airline:val('fl-airline'), flightNum:val('fl-num'),
+      orig:val('fl-orig'), origCode:val('fl-origc').toUpperCase(),
+      dest:val('fl-dest'), destCode:val('fl-destc').toUpperCase(),
+      depDate:val('fl-dd'), depTime:val('fl-dt'),
+      arrDate:val('fl-ad'), arrTime:val('fl-at'),
+      dur:val('fl-dur'), price:val('fl-price'), conf:val('fl-conf'),
+      seat:val('fl-seat'), cls:val('fl-cls'), terminal:val('fl-term'),
+      notes:(document.getElementById('fl-notes')||{}).value||''
+    };
+    if (id) D.flights = D.flights.map(f=>f.id===id?flight:f);
+    else D.flights.push(flight);
+    save(); closeModal(); toast(id?'Flight updated!':'Flight added!');
+  });
+
+  // Stop form
+  const stf = document.getElementById('stf');
+  if (stf) stf.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = S.modal.id;
+    const stop = {
+      id: id||uid(D.stops),
+      day: parseInt(val('st-day'))||1,
+      type: document.getElementById('st-type').value,
+      location:val('st-loc'), date:val('st-date'),
+      excursion:val('st-exc'), arrivalTime:val('st-arr'), departureTime:val('st-dep'),
+      notes:(document.getElementById('st-notes')||{}).value||''
+    };
+    if (id) D.stops = D.stops.map(s=>s.id===id?stop:s);
+    else D.stops.push(stop);
+    save(); closeModal(); toast(id?'Stop updated!':'Stop added!');
+  });
+
+  // Packing form
+  const pkf = document.getElementById('pkf');
+  if (pkf) pkf.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = S.modal.id;
+    const existing = id ? D.packing.find(i=>i.id===id) : null;
+    const itemName = val('pk-item');
+    if (!itemName) return;
+    const item = {
+      id: id||uid(D.packing),
+      category: val('pk-cat')||'Other',
+      item: itemName,
+      notes: val('pk-notes'),
+      packed: existing ? existing.packed : false
+    };
+    if (id) D.packing = D.packing.map(i=>i.id===id?item:i);
+    else D.packing.push(item);
+    save(); closeModal(); toast(id?'Item updated!':'Item added!');
+  });
+
+  // Budget form
+  const bdf = document.getElementById('bdf');
+  if (bdf) bdf.addEventListener('submit', e => {
+    e.preventDefault();
+    if (!D.budget) D.budget = {};
+    D.budget.target = val('bd-target');
+    save(); toast('Budget saved!'); softGo();
+  });
+
+  // Activity form
+  const acf = document.getElementById('acf');
+  if (acf) acf.addEventListener('submit', e => {
+    e.preventDefault();
+    const id = S.modal.id;
+    if (!D.activities) D.activities = [];
+    const act = {
+      id: id||uid(D.activities),
+      type: document.getElementById('ac-type').value,
+      title: val('ac-title'), date: val('ac-date'), endDate: val('ac-edate'),
+      time: val('ac-time'), cost: val('ac-cost'), location: val('ac-loc'),
+      confirmation: val('ac-conf'),
+      notes: (document.getElementById('ac-notes')||{}).value||''
+    };
+    if (id) D.activities = D.activities.map(a=>a.id===id?act:a);
+    else D.activities.push(act);
+    save(); closeModal(); toast(id?'Updated!':'Added!');
+  });
+
+  // Modal overlay close
+  const mover = document.getElementById('mover');
+  if (mover) mover.addEventListener('click', e=>{ if(e.target===mover) closeModal(); });
+
+  // Packing checkboxes
+  document.querySelectorAll('.pkchk').forEach(cb=>{
+    cb.addEventListener('change', function() {
+      const id = parseInt(this.dataset.id);
+      const item = D.packing.find(i=>i.id===id);
+      if (item) { item.packed=this.checked; save(); softGo(); }
+    });
+  });
+
+  // Escape key
+  document.onkeydown = e => { if(e.key==='Escape' && S.modal) closeModal(); };
+}
+
+// ────────────────────────────────────────────────────────────
+// ACTIONS
+// ────────────────────────────────────────────────────────────
+function nav(view) { S.view=view; S.modal=null; go(0); }
+function setTab(tab) { S.tab=tab; S.modal=null; go(0); }
+function openModal(type, id) { S.modal={type,id}; softGo(); }
+function closeModal() { S.modal=null; softGo(); }
+
+function delFlight(id) {
+  if (!confirm('Delete this flight?')) return;
+  D.flights = D.flights.filter(f=>f.id!==id);
+  save(); toast('Flight deleted.'); go(window.scrollY);
+}
+function delStop(id) {
+  if (!confirm('Delete this stop?')) return;
+  D.stops = D.stops.filter(s=>s.id!==id);
+  save(); toast('Stop deleted.'); go(window.scrollY);
+}
+function delPack(id) {
+  if (!confirm('Delete this item?')) return;
+  D.packing = D.packing.filter(i=>i.id!==id);
+  save(); toast('Item deleted.'); go(window.scrollY);
+}
+function delActivity(id) {
+  if (!confirm('Delete this item?')) return;
+  D.activities = (D.activities||[]).filter(a=>a.id!==id);
+  save(); toast('Item deleted.'); go(window.scrollY);
+}
+
+// ── TRIPS ────────────────────────────────────────────────────
+function newTrip() {
+  const newId = T.trips.length ? Math.max(...T.trips.map(t=>t.id))+1 : 1;
+  const trip = { id:newId, ...clone(DEFAULTS) };
+  T.trips.push(trip);
+  T.activeId = newId;
+  D = trip;
+  save(); S.modal=null; toast('New trip created!'); go(0);
+}
+function switchTrip(id) {
+  const idx = T.trips.findIndex(t=>t.id===T.activeId);
+  if (idx>=0) T.trips[idx]=D;
+  T.activeId = id;
+  D = T.trips.find(t=>t.id===id);
+  if (!D.budget) D.budget = { target:'' };
+  save(); S.modal=null; toast('Switched trips!'); go(0);
+}
+function deleteTrip(id) {
+  if (T.trips.length<=1) { toast('Cannot delete the only trip. Use Reset to clear data instead.', true); return; }
+  const name = T.trips.find(t=>t.id===id)?.cruise?.name || 'this trip';
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  T.trips = T.trips.filter(t=>t.id!==id);
+  if (T.activeId===id) {
+    T.activeId = T.trips[0].id;
+    D = T.trips[0];
+    if (!D.budget) D.budget = { target:'' };
+  }
+  save(); S.modal=null; toast('Trip deleted.'); go(0);
+}
+
+// ── SHARE ────────────────────────────────────────────────────
+// Key dictionaries: full name → short code (per object type)
+const SK = {
+  cruise:  { name:'n',  cruiseLine:'cL', ship:'sh', bookingNumber:'bn',
+             departureDate:'dD', returnDate:'rD', departurePort:'dP',
+             returnPort:'rP', roomNumber:'rN', roomType:'rT', deckNumber:'dk',
+             passengers:'px', package:'pg', totalPrice:'tP',
+             pricePerPerson:'pP', notes:'nt' },
+  flight:  { id:'i',  dir:'d',  airline:'al', flightNum:'fn', orig:'og',
+             origCode:'oC', dest:'de', destCode:'dC', depDate:'dt',
+             depTime:'dT', arrDate:'at', arrTime:'aT', dur:'du', price:'pr',
+             conf:'cf', seat:'se', cls:'cl', terminal:'tm', notes:'nt' },
+  stop:    { id:'i',  port:'p', country:'cy', date:'dt', arrival:'ar',
+             departure:'dp', category:'ca', excursion:'ex',
+             excursionCost:'ec', notes:'nt', weather:'we' },
+  packing:  { id:'i',  category:'ca', item:'it', notes:'nt', packed:'pk' },
+  activity: { id:'i',  type:'ty', title:'tl', date:'dt', time:'tm',
+              endDate:'ed', location:'lo', confirmation:'cf',
+              cost:'co', notes:'nt' },
+  budget:   { target:'t' }
+};
+
+function shrinkObj(obj, map) {
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === '' || v === null || v === undefined) continue;
+    if (k === 'packed' && v === false) continue;
+    out[map[k] || k] = v;
+  }
+  return out;
+}
+function growObj(obj, map) {
+  const rev = Object.fromEntries(Object.entries(map).map(([k,v])=>[v,k]));
+  const out = {};
+  for (const [k, v] of Object.entries(obj)) out[rev[k]||k] = v;
+  return out;
+}
+function shrink(d) {
+  const out = {};
+  const c = shrinkObj(d.cruise||{}, SK.cruise);
+  if (Object.keys(c).length) out.c = c;
+  if (d.flights?.length)    out.f = d.flights.map(x=>shrinkObj(x, SK.flight));
+  if (d.stops?.length)      out.s = d.stops.map(x=>shrinkObj(x, SK.stop));
+  if (d.packing?.length)    out.k = d.packing.map(x=>shrinkObj(x, SK.packing));
+  if (d.activities?.length) out.a = d.activities.map(x=>shrinkObj(x, SK.activity));
+  const bt = shrinkObj(d.budget||{}, SK.budget);
+  if (Object.keys(bt).length) out.b = bt;
+  return out;
+}
+function grow(obj) {
+  return {
+    cruise:     { ...DEFAULTS.cruise, ...growObj(obj.c||{}, SK.cruise) },
+    flights:    (obj.f||[]).map(x=>growObj(x, SK.flight)),
+    stops:      (obj.s||[]).map(x=>growObj(x, SK.stop)),
+    packing:    (obj.k||[]).map(x=>({ packed:false, ...growObj(x, SK.packing) })),
+    activities: (obj.a||[]).map(x=>growObj(x, SK.activity)),
+    budget:     { ...DEFAULTS.budget, ...growObj(obj.b||{}, SK.budget) }
+  };
+}
+
+async function encodeShare(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(shrink(obj)));
+  const cs = new CompressionStream('deflate-raw');
+  const w = cs.writable.getWriter();
+  w.write(bytes); w.close();
+  const buf = await new Response(cs.readable).arrayBuffer();
+  let bin = ''; new Uint8Array(buf).forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+async function decodeShare(code) {
+  const bin = atob(code.trim().replace(/-/g,'+').replace(/_/g,'/'));
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  const ds = new DecompressionStream('deflate-raw');
+  const w = ds.writable.getWriter();
+  w.write(bytes); w.close();
+  const buf = await new Response(ds.readable).arrayBuffer();
+  return grow(JSON.parse(new TextDecoder().decode(buf)));
+}
+
+async function checkShareLink() {
+  if (!location.hash.startsWith('#share=')) return;
+  const code = location.hash.slice(7);
+  try { history.replaceState(null, '', location.pathname + location.search); } catch {}
+  try {
+    const imported = await decodeShare(code);
+    const newId = T.trips.length ? Math.max(...T.trips.map(t=>t.id))+1 : 1;
+    const trip = { id:newId, ...imported };
+    T.trips.push(trip);
+    T.activeId = newId;
+    D = trip;
+    if (!D.budget) D.budget = { target:'' };
+    save();
+  } catch {}
+}
+
+async function openShareModal() {
+  const link = `${location.href.split('#')[0]}#share=${await encodeShare(clone(D))}`;
+  S.modal = { type:'share', link };
+  softGo();
+}
+
+function copyShareLink() {
+  const box = document.getElementById('share-link-box');
+  if (!box) return;
+  navigator.clipboard.writeText(box.value).then(() => {
+    document.getElementById('copy-confirm')?.classList.remove('hidden');
+    const btn = document.getElementById('copy-btn');
+    if (btn) btn.innerHTML = '<i class="fa fa-check mr-1"></i>Copied!';
+  }).catch(() => { box.select(); document.execCommand('copy'); });
+}
+
+function nativeShare(link) {
+  navigator.share({ title: D.cruise.name || 'Trip Itinerary', url: link }).catch(() => {});
+}
+
+async function importFromPaste() {
+  const input = document.getElementById('share-paste');
+  if (!input || !input.value.trim()) return;
+  let code = input.value.trim();
+  if (code.includes('#share=')) code = code.split('#share=')[1];
+  try {
+    const imported = await decodeShare(code);
+    const newId = T.trips.length ? Math.max(...T.trips.map(t=>t.id))+1 : 1;
+    const trip = { id:newId, ...imported };
+    T.trips.push(trip);
+    T.activeId = newId;
+    D = trip;
+    if (!D.budget) D.budget = { target:'' };
+    save(); input.value = ''; toast('Trip imported!'); go(0);
+  } catch {
+    toast('Could not read that code — make sure you copied it correctly.', true);
+  }
+}
+
+
+function exportData() {
+  const name = D.cruise?.name ? D.cruise.name.replace(/\s+/g,'-').toLowerCase() : 'trip';
+  const a = document.createElement('a');
+  a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(D, null, 2));
+  a.download = `itineo-${name}.json`;
+  a.click();
+  toast('Trip exported!');
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.cruise && !imported.flights && !imported.packing) {
+        toast('Invalid backup file.', true); return;
+      }
+      if (!confirm('Import this trip? It will be added as a new trip in your list.')) {
+        input.value=''; return;
+      }
+      const newId = T.trips.length ? Math.max(...T.trips.map(t=>t.id))+1 : 1;
+      const trip = { id:newId, ...clone(DEFAULTS), ...imported };
+      if (!trip.budget) trip.budget = { target:'' };
+      T.trips.push(trip);
+      T.activeId = newId;
+      D = trip;
+      save(); input.value='';
+      toast('Trip imported!'); go(0);
+    } catch {
+      toast('Could not read file — make sure it\'s a valid JSON backup.', true);
+      input.value='';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function confirmReset() {
+  const name = D.cruise?.name || 'this trip';
+  if (confirm(`Reset all data for "${name}"? This cannot be undone.`)) {
+    const resetTrip = { id:T.activeId, ...clone(DEFAULTS) };
+    const idx = T.trips.findIndex(t=>t.id===T.activeId);
+    if (idx>=0) T.trips[idx] = resetTrip;
+    D = resetTrip;
+    save(); toast('Trip data reset.'); go(0);
+  }
+}
+
+// ── DEFAULT PACKING ITEMS ────────────────────────────────────
+function addDefaults() {
+  const items = [
+    ['Documents','Passport'],['Documents','Cruise booking confirmation'],
+    ['Documents','Flight tickets / boarding passes'],['Documents','Travel insurance documents'],
+    ['Documents','Credit cards & cash'],['Documents',"Driver's license / ID"],
+    ['Documents','Emergency contacts list'],
+    ['Clothing','Swimsuits (×2)'],['Clothing','Cover-up / beach wrap'],
+    ['Clothing','Casual daytime outfits'],['Clothing','Formal dinner outfit'],
+    ['Clothing','Comfortable walking shoes'],['Clothing','Flip flops / sandals'],
+    ['Clothing','Dress shoes'],['Clothing','Underwear & socks (extra)'],
+    ['Clothing','Light jacket or cardigan'],['Clothing','Rain jacket / poncho'],
+    ['Clothing','Pajamas'],['Clothing','Sun hat'],['Clothing','Sunglasses'],
+    ['Toiletries','Sunscreen SPF 50+'],['Toiletries','Shampoo & conditioner'],
+    ['Toiletries','Body wash'],['Toiletries','Toothbrush & toothpaste'],
+    ['Toiletries','Deodorant'],['Toiletries','Razor'],['Toiletries','Moisturizer'],
+    ['Toiletries','Lip balm with SPF'],['Toiletries','Hair dryer (check cabin first)'],
+    ['Health','Seasickness medication'],['Health','Prescription medications'],
+    ['Health','Pain relievers (Advil/Tylenol)'],['Health','Hand sanitizer'],
+    ['Health','First aid kit'],['Health','Insect repellent'],
+    ['Electronics','Phone & charger'],['Electronics','Portable battery pack'],
+    ['Electronics','Camera & memory cards'],['Electronics','Headphones / earbuds'],
+    ['Electronics','Power adapter (if international)'],['Electronics','Waterproof phone case'],
+    ['Extras','Reusable water bottle'],['Extras','Beach bag / tote'],
+    ['Extras','Small day backpack'],['Extras','Books / e-reader'],
+    ['Extras','Snacks for travel day'],['Extras','Laundry bag'],
+  ];
+  let id = uid(D.packing);
+  items.forEach(([cat,item])=>D.packing.push({id:id++,category:cat,item,notes:'',packed:false}));
+  save(); toast('Suggested items added!'); go(window.scrollY);
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function toast(msg, err=false) {
+  document.getElementById('_toast')?.remove();
+  const el=document.createElement('div');
+  el.id='_toast';
+  el.className=`fixed bottom-6 right-6 z-[100] px-5 py-3 rounded-xl shadow-xl text-white text-sm font-semibold flex items-center gap-2 transition-opacity duration-300 ${err?'bg-red-600':'bg-green-600'}`;
+  el.innerHTML=`<i class="fa fa-${err?'circle-exclamation':'circle-check'}"></i>${msg}`;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, 2500);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+load();
+checkShareLink().then(() => go(0));
+</script>
+</body>
+</html>
